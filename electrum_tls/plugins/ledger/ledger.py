@@ -3,6 +3,7 @@ import hashlib
 import sys
 import traceback
 from typing import Optional, Tuple, TYPE_CHECKING
+from binascii import hexlify
 
 from electrum_tls import ecc
 from electrum_tls import bip32
@@ -393,12 +394,13 @@ class Ledger_KeyStore(Hardware_KeyStore):
             if txin_prev_tx is None and not txin.is_segwit():
                 raise UserFacingException(_('Missing previous tx for legacy input.'))
             txin_prev_tx_raw = txin_prev_tx.serialize() if txin_prev_tx else None
+            hex_sequence = hexlify(txin.nsequence.to_bytes(4, byteorder="little")).decode()  # Convert to hex
             inputs.append([txin_prev_tx_raw,
                            txin.prevout.out_idx,
                            redeemScript,
                            txin.prevout.txid.hex(),
                            my_pubkey,
-                           txin.nsequence,
+                           hex_sequence,
                            txin.value_sats()])
             inputsPaths.append(full_path)
 
@@ -455,7 +457,10 @@ class Ledger_KeyStore(Hardware_KeyStore):
             for input_idx, utxo in enumerate(inputs):
                 self.handler.show_message(_("Preparing transaction inputs...")
                                           + f" (phase1, {input_idx}/{len(inputs)})")
-                sequence = int.to_bytes(utxo[5], length=4, byteorder="little", signed=False)
+                if isinstance(utxo[5], int):  # Convert if it is an int
+                    sequence = utxo[5].to_bytes(4, byteorder="little", signed=False)
+                else:
+                    sequence = utxo[5]  # It is binary
                 if segwitTransaction and not client_electrum.supports_segwit_trustedInputs():
                     tmp = bfh(utxo[3])[::-1]
                     tmp += int.to_bytes(utxo[1], length=4, byteorder="little", signed=False)
@@ -517,6 +522,9 @@ class Ledger_KeyStore(Hardware_KeyStore):
                 while inputIndex < len(inputs):
                     self.handler.show_message(_("Signing transaction...")
                                               + f" (phase2, {inputIndex}/{len(inputs)})")
+                    for utxo in chipInputs:
+                        print(f"Before of btchip.py → sequence: {utxo['sequence']} (tipo: {type(utxo['sequence'])})")
+
                     client_ledger.startUntrustedTransaction(firstTransaction, inputIndex,
                                                                 chipInputs, redeemScripts[inputIndex], version=tx.version)
                     # we don't set meaningful outputAddress, amount and fees
