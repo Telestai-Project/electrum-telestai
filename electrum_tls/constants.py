@@ -96,7 +96,7 @@ class BitcoinMainnet(AbstractNet):
     MERAKI_ACTIVATION_HEIGHT = 1
 
     XPRV_HEADERS = {
-        'standard':    0xa0f3f1fb,  # xprv
+        'standard':    0x0488ade4,  # xprv
         'p2wpkh-p2sh': 0x049d7878,  # yprv
         'p2wsh-p2sh':  0x0295b005,  # Yprv
         'p2wpkh':      0x04b2430c,  # zprv
@@ -104,7 +104,7 @@ class BitcoinMainnet(AbstractNet):
     }
     XPRV_HEADERS_INV = inv_dict(XPRV_HEADERS)
     XPUB_HEADERS = {
-        'standard':    0xa0f2f5f3,  # xpub
+        'standard':    0x0488b21e,  # xpub
         'p2wpkh-p2sh': 0x049d7cb2,  # ypub
         'p2wsh-p2sh':  0x0295b43f,  # Ypub
         'p2wpkh':      0x04b24746,  # zpub
