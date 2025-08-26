@@ -12,7 +12,7 @@ set -e
 
 pushd $WINEPREFIX/drive_c/electrum-tls
 
-VERSION=4.5.7
+VERSION=4.5.9
 info "Last commit: $VERSION"
 
 # Load electrum-locale for this release

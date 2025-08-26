@@ -41,7 +41,9 @@ _logger = get_logger(__name__)
 HEADER_SIZE = 120  # bytes
 LEGACY_HEADER_SIZE = 80 # bytes
 MAX_TARGET = 0x0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-MERAKI_MAX_TARGET = 0x0000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffff
+# Telestai main-net powLimit (see src/chainparams.cpp). Use the same value so we never
+# clamp DGW difficulty to a lower target than the network actually allows.
+MERAKI_MAX_TARGET = 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
 class MissingHeader(Exception):
     pass

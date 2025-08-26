@@ -45,8 +45,26 @@ function verify_hash() {
 
 function download_if_not_exist() {
     local file_name=$1 url=$2
-    if [ ! -e $file_name ] ; then
-        wget -O $file_name "$url"
+    # Check if file exists and has size > 0
+    if [ ! -s "$file_name" ] ; then
+        echo "Downloading $file_name from $url"
+        # Remove any existing empty/corrupted file
+        rm -f "$file_name"
+        # Use retry function for robustness
+        retry wget -O "$file_name" "$url" || {
+            echo "Failed to download $file_name from $url" >&2
+            rm -f "$file_name"
+            return 1
+        }
+        # Verify the file was downloaded and has content
+        if [ ! -s "$file_name" ] ; then
+            echo "Downloaded file $file_name is empty" >&2
+            rm -f "$file_name"
+            return 1
+        fi
+        echo "Successfully downloaded $file_name"
+    else
+        echo "File $file_name already exists, skipping download"
     fi
 }
 

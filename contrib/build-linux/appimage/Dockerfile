@@ -2,18 +2,14 @@
 # from https://docs.appimage.org/introduction/concepts.html :
 # "[AppImages] should be built on the oldest possible system, allowing them to run on newer system[s]"
 
-FROM debian:buster@sha256:233c3bbc892229c82da7231980d50adceba4db56a08c0b7053a4852782703459
+FROM debian:bullseye
 
 ENV LC_ALL=C.UTF-8 LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
-# need ca-certificates before using snapshot packages
+# need ca-certificates
 RUN apt update -qq > /dev/null && apt install -qq --yes --no-install-recommends \
     ca-certificates
-
-# pin the distro packages
-# COPY apt.sources.list /etc/apt/sources.list
-# COPY apt.preferences /etc/apt/preferences.d/snapshot
 
 RUN apt-get update -q && \
     apt-get install -qy --allow-downgrades \
@@ -57,8 +53,7 @@ RUN apt-get update -q && \
         libxcb-icccm4 \
         libxcb-image0 \
         libxcb-keysyms1 \
-        libxcb-util0 \
-        #libxcb-util1 \
+        libxcb-util1 \
         libxcb-render-util0 \
         libx11-xcb1 \
         libc6-dev \

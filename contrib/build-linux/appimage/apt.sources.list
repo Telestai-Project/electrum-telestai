@@ -1,2 +1,2 @@
-deb https://snapshot.debian.org/archive/debian/20230317T205011Z/ buster main
-deb-src https://snapshot.debian.org/archive/debian/20230317T205011Z/ buster main
+deb http://deb.debian.org/debian bullseye main
+deb-src http://deb.debian.org/debian bullseye main
